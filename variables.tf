@@ -8,6 +8,11 @@ variable "availability_zone" {
   default     = "eu-central-1a"
 }
 
+variable "environment" {
+  description = "which environment is it"
+  default     = "sandbox"
+}
+
 variable "vpc_cidr_block" {
   description = "CIDR block for the VPC"
   default     = "10.0.0.0/16"
@@ -35,6 +40,7 @@ variable "locations" {
 }
 
 variable "devops_ips" {
+  description = "devops IPs"
   type    = list(string)
   default = ["1.2.3.4/32"]
 }
