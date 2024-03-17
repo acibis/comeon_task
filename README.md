@@ -1,5 +1,3 @@
-README.md
-
 This is a very simple setup based on the following assumptions:
 
  - an application is hosted in AWS
