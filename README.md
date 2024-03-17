@@ -1,4 +1,4 @@
-## H2 This is a very simple setup based on the following assumptions:
+## This is a very simple setup based on the following assumptions:
 
  - an application is hosted in AWS
  - an application can be accessed from 3 different locations
@@ -11,7 +11,7 @@ This implementation assumes that:
  - the app is hosted by an EC2
  - the app is accessible with a public IP
 
-### H3 Comments:
+### Comments:
 
 - the `local.clients` variable contains a list of IP addresses created by using `toset`, `flatten` and `for` functions:
 
@@ -28,10 +28,33 @@ This implementation assumes that:
 
 
 
-### H3 What can/should be done better in case there is more time:
+### What can/should be done better in case there is more time:
 
  - make terraform state remote
  - place the EC2 in the private network, remove public IP address adding NAT gateway and load balancer to route the traffic
  - create ssh key for the instance using terraform
+ - to increase availability, use all 3 availability zones (creating 1 subnet per each availability zone, placing at least one instance of an app in each). That would require using for_each function to create subnets, example:
+```
+variable "public_subnet_cidr_blocks" {
+  default = {
+    "eu-central-1a" = "10.20.0.0/20"
+    "eu-central-1b" = "10.20.16.0/20"
+    "eu-central-1c" = "10.20.32.0/20"
+  }
+}
+
+resource "aws_subnet" "my_comeon_public_subnet" {
+
+  for_each = var.public_subnet_cidr_blocks
+
+  availability_zone = each.key
+  cidr_block        = each.value
+  vpc_id            = aws_vpc.default.id
+
+  tags = merge(local.tags, {
+    Name          = format("public-subnet-%s", each.key)
+  })
+}
+```
  - consider using fargate instead of EC2
  - consider using the autoscaling group
